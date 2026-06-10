@@ -1,0 +1,65 @@
+{
+  "@@locale": "es",
+
+  "appSubtitle": "escucha juntos, sincronizados",
+  "nicknamePlaceholder": "Apodo",
+  "createRoomTitle": "Crear una sala",
+  "createRoomSubtitle": "Elige cómo se transmite el audio a todos.",
+  "modeSignalLabel": "señal",
+  "modeStreamLabel": "stream",
+  "createRoomButton": "Crear sala",
+  "joinRoomTitle": "Unirse a una sala",
+  "roomCodePlaceholder": "Código de sala",
+  "joinRoomButton": "Unirse",
+  "serverSettings": "Configuración del servidor",
+  "serverLabel": "Servidor",
+
+  "roomTitle": "Sala",
+  "roomCodeCopied": "Código de sala copiado",
+  "syncTuningTooltip": "Ajuste de sincronización",
+  "roomSettingsTooltip": "Configuración de sala",
+  "leaveTooltip": "Salir",
+  "reconnecting": "Reconectando…",
+  "pasteTrackUrl": "Pega la URL de una pista",
+  "onlyHostCanAdd": "Solo el anfitrión puede añadir pistas",
+  "queueLabel": "Cola · {count}",
+  "@queueLabel": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "queueEmpty": "La cola está vacía",
+  "removeTooltip": "Eliminar",
+  "nowPlaying": "REPRODUCIENDO",
+  "clockSyncing": "sincronizando…",
+  "syncTuningTitle": "Ajuste de sincronización",
+  "syncTuningDescription": "Qué tan fuerte se acelera este dispositivo para ponerse al día. Más alto converge más rápido pero es más audible. Salto duro solo en gran desincronización.",
+  "maxCatchup": "Aceleración máxima",
+  "syncGentle": "Suave",
+  "syncAggressive": "Agresivo",
+  "roomPermissions": "Permisos de la sala",
+  "roomPermissionsSubtitle": "Elige quién puede hacer qué en esta sala.",
+  "permAddTracks": "Añadir pistas",
+  "permSkip": "Saltar",
+  "permRemoveTracks": "Eliminar pistas",
+  "permControlPlayback": "Controlar reproducción",
+  "syncMode": "Modo de sincronización",
+  "syncModeDescription": "Empieza rápido o espera a todos",
+  "syncResponsiveLabel": "Receptivo",
+  "syncTightLabel": "Estricto",
+  "policyEveryone": "Todos",
+  "policyHost": "Anfitrión",
+  "sharedTrackAdded": "Añadido a la cola",
+  "sharedTrackPending": "Enlace guardado — únete a una sala para añadirlo",
+  "uploadTrackTooltip": "Añadir un archivo de audio local",
+  "encodingTrack": "Codificando…",
+  "uploadingTrack": "Subiendo…",
+  "uploadFailed": "Error al subir",
+  "listeningLabel": "ESCUCHANDO",
+  "memberYou": "{nick} (tú)",
+  "@memberYou": {
+    "placeholders": {
+      "nick": { "type": "String" }
+    }
+  }
+}

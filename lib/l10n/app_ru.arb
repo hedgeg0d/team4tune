@@ -1,0 +1,65 @@
+{
+  "@@locale": "ru",
+
+  "appSubtitle": "слушайте вместе, в синхроне",
+  "nicknamePlaceholder": "Никнейм",
+  "createRoomTitle": "Создать комнату",
+  "createRoomSubtitle": "Выберите способ передачи звука.",
+  "modeSignalLabel": "сигнал",
+  "modeStreamLabel": "стрим",
+  "createRoomButton": "Создать комнату",
+  "joinRoomTitle": "Войти в комнату",
+  "roomCodePlaceholder": "Код комнаты",
+  "joinRoomButton": "Войти",
+  "serverSettings": "Настройки сервера",
+  "serverLabel": "Сервер",
+
+  "roomTitle": "Комната",
+  "roomCodeCopied": "Код комнаты скопирован",
+  "syncTuningTooltip": "Настройка синхронизации",
+  "roomSettingsTooltip": "Настройки комнаты",
+  "leaveTooltip": "Выйти",
+  "reconnecting": "Переподключение…",
+  "pasteTrackUrl": "Вставьте URL трека",
+  "onlyHostCanAdd": "Только хост может добавлять треки",
+  "queueLabel": "Очередь · {count}",
+  "@queueLabel": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "queueEmpty": "Очередь пуста",
+  "removeTooltip": "Удалить",
+  "nowPlaying": "СЕЙЧАС ИГРАЕТ",
+  "clockSyncing": "синхронизация…",
+  "syncTuningTitle": "Настройка синхронизации",
+  "syncTuningDescription": "Насколько сильно устройство ускоряется для догонки. Выше — быстрее, но заметнее. Жёсткий переход только при большом рассинхроне.",
+  "maxCatchup": "Макс. ускорение",
+  "syncGentle": "Мягко",
+  "syncAggressive": "Агрессивно",
+  "roomPermissions": "Права в комнате",
+  "roomPermissionsSubtitle": "Кто что может делать в этой комнате.",
+  "permAddTracks": "Добавлять треки",
+  "permSkip": "Пропустить",
+  "permRemoveTracks": "Удалять треки",
+  "permControlPlayback": "Управлять воспроизведением",
+  "syncMode": "Режим синхронизации",
+  "syncModeDescription": "Быстрый старт или ожидание всех участников",
+  "syncResponsiveLabel": "Отзывчивый",
+  "syncTightLabel": "Строгий",
+  "policyEveryone": "Все",
+  "policyHost": "Хост",
+  "sharedTrackAdded": "Добавлено в очередь",
+  "sharedTrackPending": "Ссылка сохранена — войдите в комнату, чтобы добавить",
+  "uploadTrackTooltip": "Добавить локальный аудиофайл",
+  "encodingTrack": "Кодирование…",
+  "uploadingTrack": "Загрузка…",
+  "uploadFailed": "Не удалось загрузить",
+  "listeningLabel": "СЛУШАЮТ",
+  "memberYou": "{nick} (вы)",
+  "@memberYou": {
+    "placeholders": {
+      "nick": { "type": "String" }
+    }
+  }
+}

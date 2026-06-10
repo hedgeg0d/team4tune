@@ -1,0 +1,65 @@
+{
+  "@@locale": "en",
+
+  "appSubtitle": "listen together, in sync",
+  "nicknamePlaceholder": "Nickname",
+  "createRoomTitle": "Create a room",
+  "createRoomSubtitle": "Pick how audio travels to everyone.",
+  "modeSignalLabel": "signal",
+  "modeStreamLabel": "stream",
+  "createRoomButton": "Create room",
+  "joinRoomTitle": "Join a room",
+  "roomCodePlaceholder": "Room code",
+  "joinRoomButton": "Join room",
+  "serverSettings": "Server settings",
+  "serverLabel": "Server",
+
+  "roomTitle": "Room",
+  "roomCodeCopied": "Room code copied",
+  "syncTuningTooltip": "Sync tuning",
+  "roomSettingsTooltip": "Room settings",
+  "leaveTooltip": "Leave",
+  "reconnecting": "Reconnecting…",
+  "pasteTrackUrl": "Paste a track URL",
+  "onlyHostCanAdd": "Only the host can add tracks",
+  "queueLabel": "Queue · {count}",
+  "@queueLabel": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "queueEmpty": "Queue is empty",
+  "removeTooltip": "Remove",
+  "nowPlaying": "NOW PLAYING",
+  "clockSyncing": "syncing…",
+  "syncTuningTitle": "Sync tuning",
+  "syncTuningDescription": "How hard this device speeds up to catch up. Higher converges faster but is more audible. Hard seeks only on big desync.",
+  "maxCatchup": "Max catch-up",
+  "syncGentle": "Gentle",
+  "syncAggressive": "Aggressive",
+  "roomPermissions": "Room permissions",
+  "roomPermissionsSubtitle": "Choose who can do what in this room.",
+  "permAddTracks": "Add tracks",
+  "permSkip": "Skip",
+  "permRemoveTracks": "Remove tracks",
+  "permControlPlayback": "Control playback",
+  "syncMode": "Sync mode",
+  "syncModeDescription": "Start fast for ready listeners, or wait for everyone",
+  "syncResponsiveLabel": "Responsive",
+  "syncTightLabel": "Tight",
+  "policyEveryone": "Everyone",
+  "policyHost": "Host",
+  "sharedTrackAdded": "Added to queue",
+  "sharedTrackPending": "Link saved — join a room to add it",
+  "uploadTrackTooltip": "Add a local audio file",
+  "encodingTrack": "Encoding…",
+  "uploadingTrack": "Uploading…",
+  "uploadFailed": "Upload failed",
+  "listeningLabel": "LISTENING",
+  "memberYou": "{nick} (you)",
+  "@memberYou": {
+    "placeholders": {
+      "nick": { "type": "String" }
+    }
+  }
+}
