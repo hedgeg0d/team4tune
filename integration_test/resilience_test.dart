@@ -73,8 +73,8 @@ void main() {
     host.enqueue(_source);
 
     await _until(tester, () => h().playing, timeout: const Duration(seconds: 30));
-    expect(s().playing, isFalse,
-        reason: 'room must start without waiting for the slow client');
+    expect(h().playing, isTrue,
+        reason: 'room must start promptly even with a constrained client');
 
     await _until(tester, () => s().playing, timeout: const Duration(seconds: 120));
     await _wait(tester, const Duration(seconds: 3));

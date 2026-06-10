@@ -22,6 +22,7 @@ String httpBaseFromWs(String wsUrl) {
   return '$scheme://${u.host}$port';
 }
 
+const streamDurationThresholdMs = 10 * 60 * 1000;
 const driftIgnoreThresholdMs = 35;
 const driftSeekThresholdMs = 800;
 const _maxNudge = 0.06;
@@ -190,18 +191,27 @@ class PlaybackService {
         duration: durationMs > 0 ? Duration(milliseconds: durationMs) : null,
       );
       final AudioSource source;
+      var streamed = false;
       if (await dl.isCached(trackId)) {
         source = AudioSource.file(dl.fileFor(trackId).path, tag: tag);
         _sendProgress(trackId, ready: true, frac: 1.0, bps: 0);
       } else {
         final url = resolveMediaUrl(_httpBase, fileUrl);
-        source = LockCachingAudioSource(Uri.parse(url), tag: tag);
-        _dlProgSub = (source as LockCachingAudioSource).downloadProgressStream
-            .listen(
-              (p) => _sendProgress(trackId, ready: p >= 1.0, frac: p, bps: 0),
-            );
+        if (durationMs >= streamDurationThresholdMs) {
+          source = AudioSource.uri(Uri.parse(url), tag: tag);
+          streamed = true;
+        } else {
+          source = LockCachingAudioSource(Uri.parse(url), tag: tag);
+          _dlProgSub = (source as LockCachingAudioSource).downloadProgressStream
+              .listen(
+                (p) => _sendProgress(trackId, ready: p >= 1.0, frac: p, bps: 0),
+              );
+        }
       }
       await _player.setAudioSource(source);
+      if (streamed) {
+        _sendProgress(trackId, ready: true, frac: 1.0, bps: 0);
+      }
       _trackId = trackId;
       _emit();
       _client.send(typeReady, {'trackId': trackId});
@@ -411,6 +421,7 @@ class PlaybackService {
       if (scheduled >= _prefetchDepth) break;
       final url = t.fileUrl;
       if (t.id == _trackId || url == null || url.isEmpty) continue;
+      if ((t.durationMs ?? 0) >= streamDurationThresholdMs) continue;
       if (await dl.isCached(t.id)) continue;
       scheduled++;
       unawaited(
