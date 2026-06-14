@@ -34,6 +34,7 @@ class AppState {
     this.playing = false,
     this.positionMs = 0,
     this.driftMs = 0,
+    this.buffering = false,
     this.reconnecting = false,
     this.catchupSpeed = 1.06,
     this.shareNotice,
@@ -49,6 +50,7 @@ class AppState {
   final bool playing;
   final int positionMs;
   final int driftMs;
+  final bool buffering;
   final bool reconnecting;
   final double catchupSpeed;
   final String? shareNotice;
@@ -66,6 +68,7 @@ class AppState {
     bool? playing,
     int? positionMs,
     int? driftMs,
+    bool? buffering,
     bool? reconnecting,
     double? catchupSpeed,
     String? shareNotice,
@@ -86,6 +89,7 @@ class AppState {
       playing: playing ?? this.playing,
       positionMs: positionMs ?? this.positionMs,
       driftMs: driftMs ?? this.driftMs,
+      buffering: buffering ?? this.buffering,
       reconnecting: reconnecting ?? this.reconnecting,
       catchupSpeed: catchupSpeed ?? this.catchupSpeed,
       shareNotice: shareNotice ?? this.shareNotice,
@@ -296,6 +300,7 @@ class RoomController extends Notifier<AppState> {
           playing: ps.playing,
           positionMs: ps.positionMs,
           driftMs: ps.driftMs,
+          buffering: ps.buffering,
         );
         _syncRoomService();
       });

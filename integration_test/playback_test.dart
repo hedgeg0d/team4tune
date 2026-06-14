@@ -48,6 +48,32 @@ void main() {
     expect(container.read(roomControllerProvider).driftMs.abs(),
         lessThan(driftSeekThresholdMs));
   }, skip: _itUrl.isEmpty || _source.isEmpty);
+
+  testWidgets('seek on a streaming track resumes near the new position',
+      (tester) async {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    final ctrl = container.read(roomControllerProvider.notifier);
+
+    await ctrl.createRoom(_itUrl, 'it', modeSignal);
+    await _until(tester, () => container.read(roomControllerProvider).room != null);
+
+    ctrl.enqueue(_source);
+    await _until(tester, () => container.read(roomControllerProvider).playing,
+        timeout: const Duration(seconds: 90));
+    await _wait(tester, const Duration(seconds: 3));
+
+    ctrl.seek(180000);
+    await _until(
+        tester, () => container.read(roomControllerProvider).positionMs > 170000,
+        timeout: const Duration(seconds: 60));
+
+    final at = container.read(roomControllerProvider).positionMs;
+    await _wait(tester, const Duration(seconds: 4));
+    expect(container.read(roomControllerProvider).positionMs, greaterThan(at));
+    expect(container.read(roomControllerProvider).driftMs.abs(),
+        lessThan(driftSeekThresholdMs));
+  }, skip: _itUrl.isEmpty || _source.isEmpty);
 }
 
 Future<void> _until(

@@ -142,6 +142,7 @@ class _RoomScreenState extends ConsumerState<RoomScreen> {
               track: _trackById(room, state.nowPlayingTrackId),
               playing: state.playing,
               positionMs: state.positionMs,
+              buffering: state.buffering,
               canControl: _allowed(room, scopeControl),
               canSkip: _allowed(room, scopeSkip),
               onPause: ctrl.pause,
@@ -344,6 +345,7 @@ class _NowPlaying extends StatefulWidget {
     required this.track,
     required this.playing,
     required this.positionMs,
+    required this.buffering,
     required this.canControl,
     required this.canSkip,
     required this.onPause,
@@ -355,6 +357,7 @@ class _NowPlaying extends StatefulWidget {
   final Track? track;
   final bool playing;
   final int positionMs;
+  final bool buffering;
   final bool canControl;
   final bool canSkip;
   final VoidCallback onPause;
@@ -429,12 +432,22 @@ class _NowPlayingState extends State<_NowPlaying> {
                   ],
                 ),
               ),
-              IconButton.filledTonal(
-                onPressed: widget.canControl
-                    ? (widget.playing ? widget.onPause : widget.onResume)
-                    : null,
-                icon: Icon(widget.playing ? Icons.pause : Icons.play_arrow),
-              ),
+              if (widget.buffering)
+                const SizedBox(
+                  width: 48,
+                  height: 48,
+                  child: Padding(
+                    padding: EdgeInsets.all(12),
+                    child: CircularProgressIndicator(strokeWidth: 2.5),
+                  ),
+                )
+              else
+                IconButton.filledTonal(
+                  onPressed: widget.canControl
+                      ? (widget.playing ? widget.onPause : widget.onResume)
+                      : null,
+                  icon: Icon(widget.playing ? Icons.pause : Icons.play_arrow),
+                ),
               IconButton.filledTonal(
                 onPressed: widget.canSkip ? widget.onSkip : null,
                 icon: const Icon(Icons.skip_next),
