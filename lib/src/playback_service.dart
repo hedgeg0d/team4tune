@@ -188,6 +188,18 @@ class PlaybackService {
     String? title,
   ) async {
     if (trackId == null || fileUrl == null) return;
+
+    if (trackId == _trackId && _streaming && _player.playing) {
+      _client.send(typeReady, {'trackId': trackId});
+      _sendProgress(trackId, ready: true, frac: 1.0, bps: 0);
+      final pending = _pendingNowPlaying;
+      _pendingNowPlaying = null;
+      if (pending != null && (pending['trackId'] as String?) == trackId) {
+        await _onNowPlaying(pending);
+      }
+      return;
+    }
+
     _durationMs = durationMs;
     _fileUrl = fileUrl;
     _title = title;
@@ -346,6 +358,17 @@ class PlaybackService {
 
   Future<void> _onNowPlayingStreaming(int seq, int t0, int s) async {
     final serverNow = _clock.nowServerMs();
+
+    if (!_paused && _player.playing) {
+      final expected = _expectedPosition(serverNow, t0, s);
+      final actual = _segmentBaseMs + _player.position.inMilliseconds;
+      if ((actual - expected).abs() < driftSeekThresholdMs) {
+        _startDriftLoop();
+        _emit();
+        return;
+      }
+    }
+
     final base = serverNow >= t0 ? _expectedPosition(serverNow, t0, s) : s;
 
     final ok = await _loadSegmentAt(base, seq);
