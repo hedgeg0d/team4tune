@@ -114,6 +114,7 @@ class PlaybackService {
   StreamSubscription<Duration>? _posSub;
   StreamSubscription<bool>? _playingSub;
   StreamSubscription<double>? _dlProgSub;
+  StreamSubscription<ProcessingState>? _processingSub;
   int? _t0;
   int? _s;
   int _driftMs = 0;
@@ -131,7 +132,6 @@ class PlaybackService {
   bool _buffering = false;
   int _segmentBaseMs = 0;
   int _playAtMs = 0;
-  String? _fileUrl;
   String? _title;
 
   void setCatchupStrength(double maxSpeed) {
@@ -158,6 +158,15 @@ class PlaybackService {
         _client.send(typeControl, {'action': controlResume});
       } else if (!playing && !_paused) {
         _client.send(typeControl, {'action': controlPause});
+      }
+    });
+    _processingSub = _player.processingStateStream.listen((processing) {
+      final buffering =
+          processing == ProcessingState.loading ||
+          processing == ProcessingState.buffering;
+      if (_buffering != buffering) {
+        _buffering = buffering;
+        _emit();
       }
     });
     stream.listen((env) {
@@ -201,7 +210,7 @@ class PlaybackService {
     }
 
     _durationMs = durationMs;
-    _fileUrl = fileUrl;
+
     _title = title;
     _segmentBaseMs = 0;
     await _dlProgSub?.cancel();
@@ -212,6 +221,10 @@ class PlaybackService {
       _streaming = !cached && durationMs >= streamDurationThresholdMs;
 
       if (_streaming) {
+        final tag = _mediaTag(trackId);
+        final url = resolveMediaUrl(_httpBase, fileUrl);
+        final source = AudioSource.uri(Uri.parse(url), tag: tag);
+        await _player.setAudioSource(source);
         _trackId = trackId;
         _emit();
         _client.send(typeReady, {'trackId': trackId});
@@ -245,45 +258,11 @@ class PlaybackService {
   }
 
   MediaItem _mediaTag(String trackId) => MediaItem(
-        id: trackId,
-        title: (_title == null || _title!.isEmpty) ? 'team4tune' : _title!,
-        album: 'team4tune',
-        duration: _durationMs > 0 ? Duration(milliseconds: _durationMs) : null,
-      );
-
-  String _segUrl(int baseMs) {
-    final url = resolveMediaUrl(_httpBase, _fileUrl!);
-    if (baseMs < 1000) return url;
-    final sec = baseMs ~/ 1000;
-    if (url.endsWith('.opus')) {
-      return '${url.substring(0, url.length - 5)}__t$sec.opus';
-    }
-    return '${url}__t$sec';
-  }
-
-  Future<bool> _loadSegmentAt(int baseMs, int seq) async {
-    final tid = _trackId;
-    if (tid == null) return false;
-    final base = baseMs < 1000 ? 0 : (baseMs ~/ 1000) * 1000;
-    _buffering = true;
-    _emit();
-    try {
-      final source = AudioSource.uri(Uri.parse(_segUrl(base)), tag: _mediaTag(tid));
-      await _player.setAudioSource(source);
-    } catch (_) {
-      _buffering = false;
-      _emit();
-      return false;
-    }
-    if (seq != _commandSeq) {
-      _buffering = false;
-      return false;
-    }
-    _segmentBaseMs = base;
-    _buffering = false;
-    _emit();
-    return true;
-  }
+    id: trackId,
+    title: (_title == null || _title!.isEmpty) ? 'team4tune' : _title!,
+    album: 'team4tune',
+    duration: _durationMs > 0 ? Duration(milliseconds: _durationMs) : null,
+  );
 
   void _sendProgress(
     String trackId, {
@@ -357,38 +336,32 @@ class PlaybackService {
   }
 
   Future<void> _onNowPlayingStreaming(int seq, int t0, int s) async {
-    final serverNow = _clock.nowServerMs();
-
-    if (!_paused && _player.playing) {
-      final expected = _expectedPosition(serverNow, t0, s);
-      final actual = _segmentBaseMs + _player.position.inMilliseconds;
-      if ((actual - expected).abs() < driftSeekThresholdMs) {
-        _startDriftLoop();
-        _emit();
-        return;
-      }
-    }
-
-    final base = serverNow >= t0 ? _expectedPosition(serverNow, t0, s) : s;
-
-    final ok = await _loadSegmentAt(base, seq);
-    if (!ok || seq != _commandSeq) return;
-
+    _playAtMs = t0;
+    _segmentBaseMs = 0;
     await _runRemote(() => _setSpeed(1.0));
     if (seq != _commandSeq) return;
 
+    final serverNow = _clock.nowServerMs();
     if (_paused) {
       await _runRemote(() => _player.pause());
-    } else if (_clock.nowServerMs() < t0) {
-      _playAtMs = t0;
-      _scheduleStart(seq);
-    } else {
-      final within =
-          (_expectedPosition(_clock.nowServerMs(), t0, s) - _segmentBaseMs)
-              .clamp(0, 1 << 30);
-      await _runRemote(() => _player.seek(Duration(milliseconds: within)));
+      if (seq != _commandSeq) return;
+      await _runRemote(
+        () => _player.seek(Duration(milliseconds: _clampPosition(s))),
+      );
+    } else if (serverNow >= t0) {
+      await _runRemote(
+        () => _player.seek(
+          Duration(milliseconds: _expectedPosition(serverNow, t0, s)),
+        ),
+      );
       if (seq != _commandSeq) return;
       await _runRemote(() => _player.play());
+    } else {
+      await _runRemote(
+        () => _player.seek(Duration(milliseconds: _clampPosition(s))),
+      );
+      if (seq != _commandSeq) return;
+      _scheduleStart(seq);
     }
     _startDriftLoop();
     _emit();
@@ -460,15 +433,6 @@ class PlaybackService {
     return pos;
   }
 
-  Future<void> _reseekStreaming() async {
-    final t0 = _t0;
-    final s = _s;
-    if (t0 == null || s == null) return;
-    final seq = ++_commandSeq;
-    _startTimer?.cancel();
-    await _onNowPlayingStreaming(seq, t0, s);
-  }
-
   Future<void> _correctDrift() async {
     if (_correctingDrift || _buffering) return;
     final t0 = _t0;
@@ -477,20 +441,16 @@ class PlaybackService {
     _correctingDrift = true;
     try {
       final expected = _expectedPosition(_clock.nowServerMs(), t0, s);
-      final actual = (_streaming ? _segmentBaseMs : 0) +
-          _player.position.inMilliseconds;
+      final actual =
+          (_streaming ? _segmentBaseMs : 0) + _player.position.inMilliseconds;
       _driftMs = actual - expected;
       final action = driftActionFor(_driftMs, maxNudge: _catchup);
       switch (action.kind) {
         case DriftKind.seek:
-          if (_streaming) {
-            unawaited(_reseekStreaming());
-          } else {
-            await _runRemote(
-              () => _player.seek(Duration(milliseconds: expected)),
-            );
-            await _runRemote(() => _setSpeed(1.0));
-          }
+          await _runRemote(
+            () => _player.seek(Duration(milliseconds: expected)),
+          );
+          await _runRemote(() => _setSpeed(1.0));
           break;
         case DriftKind.nudge:
           await _runRemote(() => _setSpeed(action.speed));
@@ -561,8 +521,8 @@ class PlaybackService {
       PlaybackState(
         trackId: _trackId,
         playing: _player.playing,
-        positionMs: positionMs ??
-            (_segmentBaseMs + _player.position.inMilliseconds),
+        positionMs:
+            positionMs ?? (_segmentBaseMs + _player.position.inMilliseconds),
         driftMs: _driftMs,
         buffering: _buffering,
       ),
@@ -576,6 +536,7 @@ class PlaybackService {
     await _dlProgSub?.cancel();
     await _posSub?.cancel();
     await _playingSub?.cancel();
+    await _processingSub?.cancel();
     await _player.dispose();
     if (!_state.isClosed) await _state.close();
   }
