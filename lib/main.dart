@@ -29,7 +29,7 @@ Future<void> main() async {
         androidNotificationChannelName: 'Playback',
         androidNotificationIcon: 'drawable/notification_icon',
         androidNotificationOngoing: true,
-        androidStopForegroundOnPause: false,
+        androidStopForegroundOnPause: true,
       );
     } catch (e, st) {
       debugPrint('JustAudioBackground.init failed: $e\n$st');
