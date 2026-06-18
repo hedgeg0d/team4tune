@@ -47,6 +47,14 @@
   "syncModeDescription": "Быстрый старт или ожидание всех участников",
   "syncResponsiveLabel": "Отзывчивый",
   "syncTightLabel": "Строгий",
+  "cacheLimit": "Лимит кеша",
+  "cacheLimitDescription": "Сколько аудио сервер держит скачанным целиком для мгновенной перемотки. Длинные треки сверх лимита стримятся по частям.",
+  "cacheLimitValue": "{mb} МБ",
+  "@cacheLimitValue": {
+    "placeholders": {
+      "mb": { "type": "int" }
+    }
+  },
   "policyEveryone": "Все",
   "policyHost": "Хост",
   "sharedTrackAdded": "Добавлено в очередь",

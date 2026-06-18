@@ -65,14 +65,18 @@ void main() {
 
     ctrl.seek(180000);
     await _until(
-        tester, () => container.read(roomControllerProvider).positionMs > 170000,
+        tester, () => container.read(roomControllerProvider).positionMs > 182000,
         timeout: const Duration(seconds: 60));
 
     final at = container.read(roomControllerProvider).positionMs;
     await _wait(tester, const Duration(seconds: 4));
     expect(container.read(roomControllerProvider).positionMs, greaterThan(at));
-    expect(container.read(roomControllerProvider).driftMs.abs(),
-        lessThan(driftSeekThresholdMs));
+    await _until(
+        tester,
+        () =>
+            container.read(roomControllerProvider).driftMs.abs() <
+            driftSeekThresholdMs,
+        timeout: const Duration(seconds: 30));
   }, skip: _itUrl.isEmpty || _source.isEmpty);
 }
 

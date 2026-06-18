@@ -133,6 +133,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String get syncTightLabel => 'Строгий';
 
   @override
+  String get cacheLimit => 'Лимит кеша';
+
+  @override
+  String get cacheLimitDescription =>
+      'Сколько аудио сервер держит скачанным целиком для мгновенной перемотки. Длинные треки сверх лимита стримятся по частям.';
+
+  @override
+  String cacheLimitValue(int mb) {
+    return '$mb МБ';
+  }
+
+  @override
   String get policyEveryone => 'Все';
 
   @override

@@ -133,6 +133,18 @@ class AppLocalizationsEs extends AppLocalizations {
   String get syncTightLabel => 'Estricto';
 
   @override
+  String get cacheLimit => 'Límite de caché';
+
+  @override
+  String get cacheLimitDescription =>
+      'Cuánto audio mantiene el servidor descargado por completo para saltar al instante. Las pistas largas que excedan el límite se transmiten bajo demanda.';
+
+  @override
+  String cacheLimitValue(int mb) {
+    return '$mb MB';
+  }
+
+  @override
   String get policyEveryone => 'Todos';
 
   @override

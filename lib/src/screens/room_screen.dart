@@ -778,23 +778,63 @@ class _SettingsSheetState extends State<_SettingsSheet> {
           ),
           const Divider(height: 24),
           Text(l10n.syncMode, style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
+          Text(
+            l10n.syncModeDescription,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: SegmentedButton<String>(
+              segments: [
+                ButtonSegment(
+                  value: syncResponsive,
+                  label: Text(l10n.syncResponsiveLabel),
+                ),
+                ButtonSegment(value: syncTight, label: Text(l10n.syncTightLabel)),
+              ],
+              selected: {_s.sync},
+              onSelectionChanged: (s) => _update(_s.copyWith(sync: s.first)),
+            ),
+          ),
+          const Divider(height: 24),
+          Text(l10n.cacheLimit, style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 4),
+          Text(
+            l10n.cacheLimitDescription,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 4),
           Row(
             children: [
               Expanded(
-                child: Text(l10n.syncModeDescription),
+                child: Slider(
+                  min: memLimitMinMb.toDouble(),
+                  max: memLimitMaxMb.toDouble(),
+                  divisions: memLimitMaxMb - memLimitMinMb,
+                  value: _s.memLimitMb
+                      .clamp(memLimitMinMb, memLimitMaxMb)
+                      .toDouble(),
+                  label: l10n.cacheLimitValue(_s.memLimitMb),
+                  onChanged: (v) =>
+                      setState(() => _s = _s.copyWith(memLimitMb: v.round())),
+                  onChangeEnd: (v) =>
+                      _update(_s.copyWith(memLimitMb: v.round())),
+                ),
               ),
-              const SizedBox(width: 12),
-              SegmentedButton<String>(
-                segments: [
-                  ButtonSegment(
-                    value: syncResponsive,
-                    label: Text(l10n.syncResponsiveLabel),
-                  ),
-                  ButtonSegment(value: syncTight, label: Text(l10n.syncTightLabel)),
-                ],
-                selected: {_s.sync},
-                onSelectionChanged: (s) => _update(_s.copyWith(sync: s.first)),
+              const SizedBox(width: 8),
+              SizedBox(
+                width: 64,
+                child: Text(
+                  l10n.cacheLimitValue(_s.memLimitMb),
+                  textAlign: TextAlign.end,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
               ),
             ],
           ),

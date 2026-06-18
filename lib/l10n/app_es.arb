@@ -47,6 +47,14 @@
   "syncModeDescription": "Empieza rápido o espera a todos",
   "syncResponsiveLabel": "Receptivo",
   "syncTightLabel": "Estricto",
+  "cacheLimit": "Límite de caché",
+  "cacheLimitDescription": "Cuánto audio mantiene el servidor descargado por completo para saltar al instante. Las pistas largas que excedan el límite se transmiten bajo demanda.",
+  "cacheLimitValue": "{mb} MB",
+  "@cacheLimitValue": {
+    "placeholders": {
+      "mb": { "type": "int" }
+    }
+  },
   "policyEveryone": "Todos",
   "policyHost": "Anfitrión",
   "sharedTrackAdded": "Añadido a la cola",

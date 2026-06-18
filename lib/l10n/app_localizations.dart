@@ -340,6 +340,24 @@ abstract class AppLocalizations {
   /// **'Tight'**
   String get syncTightLabel;
 
+  /// No description provided for @cacheLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache limit'**
+  String get cacheLimit;
+
+  /// No description provided for @cacheLimitDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'How much audio the server keeps fully downloaded for instant seeking. Longer tracks beyond the budget stream on demand.'**
+  String get cacheLimitDescription;
+
+  /// No description provided for @cacheLimitValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{mb} MB'**
+  String cacheLimitValue(int mb);
+
   /// No description provided for @policyEveryone.
   ///
   /// In en, this message translates to:

@@ -36,6 +36,10 @@ const controlPause = 'pause';
 const controlResume = 'resume';
 const controlSeek = 'seek';
 
+const memLimitMinMb = 2;
+const memLimitMaxMb = 100;
+const memLimitDefaultMb = 50;
+
 class RoomSettings {
   const RoomSettings({
     this.enqueue = policyEveryone,
@@ -43,6 +47,7 @@ class RoomSettings {
     this.remove = policyEveryone,
     this.control = policyEveryone,
     this.sync = syncResponsive,
+    this.memLimitMb = memLimitDefaultMb,
   });
 
   final String enqueue;
@@ -50,6 +55,7 @@ class RoomSettings {
   final String remove;
   final String control;
   final String sync;
+  final int memLimitMb;
 
   String policyFor(String scope) {
     switch (scope) {
@@ -72,6 +78,7 @@ class RoomSettings {
     String? remove,
     String? control,
     String? sync,
+    int? memLimitMb,
   }) {
     return RoomSettings(
       enqueue: enqueue ?? this.enqueue,
@@ -79,6 +86,7 @@ class RoomSettings {
       remove: remove ?? this.remove,
       control: control ?? this.control,
       sync: sync ?? this.sync,
+      memLimitMb: memLimitMb ?? this.memLimitMb,
     );
   }
 
@@ -88,6 +96,7 @@ class RoomSettings {
         'remove': remove,
         'control': control,
         'sync': sync,
+        'memLimitMb': memLimitMb,
       };
 
   static RoomSettings fromJson(Map<String, dynamic>? j) {
@@ -98,6 +107,7 @@ class RoomSettings {
       remove: j['remove'] as String? ?? policyEveryone,
       control: j['control'] as String? ?? policyEveryone,
       sync: j['sync'] as String? ?? syncResponsive,
+      memLimitMb: (j['memLimitMb'] as num?)?.toInt() ?? memLimitDefaultMb,
     );
   }
 }

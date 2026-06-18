@@ -47,6 +47,14 @@
   "syncModeDescription": "Start fast for ready listeners, or wait for everyone",
   "syncResponsiveLabel": "Responsive",
   "syncTightLabel": "Tight",
+  "cacheLimit": "Cache limit",
+  "cacheLimitDescription": "How much audio the server keeps fully downloaded for instant seeking. Longer tracks beyond the budget stream on demand.",
+  "cacheLimitValue": "{mb} MB",
+  "@cacheLimitValue": {
+    "placeholders": {
+      "mb": { "type": "int" }
+    }
+  },
   "policyEveryone": "Everyone",
   "policyHost": "Host",
   "sharedTrackAdded": "Added to queue",
