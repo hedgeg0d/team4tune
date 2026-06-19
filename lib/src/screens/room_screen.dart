@@ -52,9 +52,9 @@ class _RoomScreenState extends ConsumerState<RoomScreen> {
               ),
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: room.roomCode));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.roomCodeCopied)),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(l10n.roomCodeCopied)));
               },
             ),
           ],
@@ -673,25 +673,32 @@ class _SyncTuningSheetState extends State<_SyncTuningSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.syncTuningTitle, style: Theme.of(context).textTheme.titleLarge),
+          Text(
+            l10n.syncTuningTitle,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
           const SizedBox(height: 4),
           Text(
             l10n.syncTuningDescription,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: 16),
           Row(
             children: [
-              Text(l10n.maxCatchup,
-                  style: Theme.of(context).textTheme.titleMedium),
+              Text(
+                l10n.maxCatchup,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
               const Spacer(),
-              Text('${_speed.toStringAsFixed(2)}x  (+$pct%)',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: scheme.primary,
-                        fontWeight: FontWeight.w600,
-                      )),
+              Text(
+                '${_speed.toStringAsFixed(2)}x  (+$pct%)',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: scheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ],
           ),
           Slider(
@@ -706,9 +713,14 @@ class _SyncTuningSheetState extends State<_SyncTuningSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(l10n.syncGentle, style: TextStyle(color: scheme.onSurfaceVariant)),
-              Text(l10n.syncAggressive,
-                  style: TextStyle(color: scheme.onSurfaceVariant)),
+              Text(
+                l10n.syncGentle,
+                style: TextStyle(color: scheme.onSurfaceVariant),
+              ),
+              Text(
+                l10n.syncAggressive,
+                style: TextStyle(color: scheme.onSurfaceVariant),
+              ),
             ],
           ),
         ],
@@ -738,107 +750,120 @@ class _SettingsSheetState extends State<_SettingsSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            l10n.roomPermissions,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            l10n.roomPermissionsSubtitle,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+          20,
+          0,
+          20,
+          28 + MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.roomPermissions,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
-          ),
-          const SizedBox(height: 12),
-          _PolicyRow(
-            label: l10n.permAddTracks,
-            value: _s.enqueue,
-            onChanged: (p) => _update(_s.copyWith(enqueue: p)),
-          ),
-          _PolicyRow(
-            label: l10n.permSkip,
-            value: _s.skip,
-            onChanged: (p) => _update(_s.copyWith(skip: p)),
-          ),
-          _PolicyRow(
-            label: l10n.permRemoveTracks,
-            value: _s.remove,
-            onChanged: (p) => _update(_s.copyWith(remove: p)),
-          ),
-          _PolicyRow(
-            label: l10n.permControlPlayback,
-            value: _s.control,
-            onChanged: (p) => _update(_s.copyWith(control: p)),
-          ),
-          const Divider(height: 24),
-          Text(l10n.syncMode, style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 4),
-          Text(
-            l10n.syncModeDescription,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            const SizedBox(height: 4),
+            Text(
+              l10n.roomPermissionsSubtitle,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: SegmentedButton<String>(
-              segments: [
-                ButtonSegment(
-                  value: syncResponsive,
-                  label: Text(l10n.syncResponsiveLabel),
+            const SizedBox(height: 12),
+            _PolicyRow(
+              label: l10n.permAddTracks,
+              value: _s.enqueue,
+              onChanged: (p) => _update(_s.copyWith(enqueue: p)),
+            ),
+            _PolicyRow(
+              label: l10n.permSkip,
+              value: _s.skip,
+              onChanged: (p) => _update(_s.copyWith(skip: p)),
+            ),
+            _PolicyRow(
+              label: l10n.permRemoveTracks,
+              value: _s.remove,
+              onChanged: (p) => _update(_s.copyWith(remove: p)),
+            ),
+            _PolicyRow(
+              label: l10n.permControlPlayback,
+              value: _s.control,
+              onChanged: (p) => _update(_s.copyWith(control: p)),
+            ),
+            const Divider(height: 24),
+            Text(l10n.syncMode, style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 4),
+            Text(
+              l10n.syncModeDescription,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: SegmentedButton<String>(
+                segments: [
+                  ButtonSegment(
+                    value: syncResponsive,
+                    label: Text(l10n.syncResponsiveLabel),
+                  ),
+                  ButtonSegment(
+                    value: syncTight,
+                    label: Text(l10n.syncTightLabel),
+                  ),
+                ],
+                selected: {_s.sync},
+                onSelectionChanged: (s) => _update(_s.copyWith(sync: s.first)),
+              ),
+            ),
+            const Divider(height: 24),
+            Text(
+              l10n.cacheLimit,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              l10n.cacheLimitDescription,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Expanded(
+                  child: Slider(
+                    min: memLimitMinMb.toDouble(),
+                    max: memLimitMaxMb.toDouble(),
+                    divisions: memLimitMaxMb - memLimitMinMb,
+                    value: _s.memLimitMb
+                        .clamp(memLimitMinMb, memLimitMaxMb)
+                        .toDouble(),
+                    label: l10n.cacheLimitValue(_s.memLimitMb),
+                    onChanged: (v) =>
+                        setState(() => _s = _s.copyWith(memLimitMb: v.round())),
+                    onChangeEnd: (v) =>
+                        _update(_s.copyWith(memLimitMb: v.round())),
+                  ),
                 ),
-                ButtonSegment(value: syncTight, label: Text(l10n.syncTightLabel)),
+                const SizedBox(width: 8),
+                SizedBox(
+                  width: 64,
+                  child: Text(
+                    l10n.cacheLimitValue(_s.memLimitMb),
+                    textAlign: TextAlign.end,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
               ],
-              selected: {_s.sync},
-              onSelectionChanged: (s) => _update(_s.copyWith(sync: s.first)),
             ),
-          ),
-          const Divider(height: 24),
-          Text(l10n.cacheLimit, style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 4),
-          Text(
-            l10n.cacheLimitDescription,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Expanded(
-                child: Slider(
-                  min: memLimitMinMb.toDouble(),
-                  max: memLimitMaxMb.toDouble(),
-                  divisions: memLimitMaxMb - memLimitMinMb,
-                  value: _s.memLimitMb
-                      .clamp(memLimitMinMb, memLimitMaxMb)
-                      .toDouble(),
-                  label: l10n.cacheLimitValue(_s.memLimitMb),
-                  onChanged: (v) =>
-                      setState(() => _s = _s.copyWith(memLimitMb: v.round())),
-                  onChangeEnd: (v) =>
-                      _update(_s.copyWith(memLimitMb: v.round())),
-                ),
-              ),
-              const SizedBox(width: 8),
-              SizedBox(
-                width: 64,
-                child: Text(
-                  l10n.cacheLimitValue(_s.memLimitMb),
-                  textAlign: TextAlign.end,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -865,7 +890,10 @@ class _PolicyRow extends StatelessWidget {
           Expanded(child: Text(label)),
           SegmentedButton<String>(
             segments: [
-              ButtonSegment(value: policyEveryone, label: Text(l10n.policyEveryone)),
+              ButtonSegment(
+                value: policyEveryone,
+                label: Text(l10n.policyEveryone),
+              ),
               ButtonSegment(value: policyHost, label: Text(l10n.policyHost)),
             ],
             selected: {value},
