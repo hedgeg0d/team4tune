@@ -36,6 +36,15 @@ On the home screen set the server URL:
 
 For the real-Android audio path, see [`scripts/waydroid.md`](scripts/waydroid.md).
 
+## Build
+
+The server field defaults empty. To prefill a host, inject it at build time via
+`TEAM4TUNE_SERVER`:
+
+```sh
+flutter build apk --dart-define=TEAM4TUNE_SERVER=ws://hedgegod.tech:8080/ws
+```
+
 ## Test
 
 ```sh

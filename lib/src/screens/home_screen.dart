@@ -13,7 +13,9 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  final _server = TextEditingController(text: 'ws://hedgegod.tech:8080/ws');
+  final _server = TextEditingController(
+    text: const String.fromEnvironment('TEAM4TUNE_SERVER'),
+  );
   final _nick = TextEditingController(text: 'guest');
   final _code = TextEditingController();
   String _mode = modeSignal;

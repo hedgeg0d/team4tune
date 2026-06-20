@@ -46,6 +46,8 @@ class WsClient {
   }
 
   Future<void> forceClose() async {
+    await _sub?.cancel();
     await _channel.sink.close();
+    if (!_controller.isClosed) await _controller.close();
   }
 }
