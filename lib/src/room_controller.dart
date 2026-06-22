@@ -11,6 +11,7 @@ import 'playback_service.dart';
 import 'protocol.dart';
 import 'room_foreground_service.dart';
 import 'share_service.dart';
+import 'stream_service.dart';
 import 'ws_client.dart';
 
 const shareNoticeAdded = 'added';
@@ -105,6 +106,8 @@ class RoomController extends Notifier<AppState> {
   StreamSubscription<ClockEstimate>? _clockSub;
   PlaybackService? _playback;
   StreamSubscription<PlaybackState>? _playbackSub;
+  StreamService? _stream;
+  StreamSubscription<bool>? _streamSub;
   String _serverHost = '';
   String _serverUrl = '';
   String _roomCode = '';
@@ -305,6 +308,12 @@ class RoomController extends Notifier<AppState> {
         _syncRoomService();
       });
       _playback!.attach(client.stream);
+      _stream = StreamService(client);
+      _streamSub = _stream!.connected.listen((up) {
+        if (!ref.mounted) return;
+        state = state.copyWith(playing: up);
+      });
+      _stream!.attach(client.stream);
     } catch (e) {
       if (reconnect) {
         _scheduleReconnect();
@@ -351,6 +360,25 @@ class RoomController extends Notifier<AppState> {
         _roomCode = room.roomCode;
         if (room.resumeToken.isNotEmpty) _resumeToken = room.resumeToken;
         _reconnectAttempts = 0;
+        if (room.mode == modeStream) {
+          _stream?.join();
+          final np = room.playingTrackId.isEmpty ? null : room.playingTrackId;
+          state = state.copyWith(
+            room: room,
+            connecting: false,
+            reconnecting: false,
+            clearError: true,
+            nowPlayingTrackId: np,
+            clearNowPlaying: np == null,
+          );
+          _syncRoomService(room: room);
+          if (_pendingShare != null && _canEnqueue(room)) {
+            enqueue(_pendingShare!);
+            _pendingShare = null;
+            _emitNotice(shareNoticeAdded);
+          }
+          break;
+        }
         final removedTrackId = _removedNowPlayingTrack(room);
         if (removedTrackId != null) {
           unawaited(_playback?.stopTrack(removedTrackId));
@@ -442,6 +470,10 @@ class RoomController extends Notifier<AppState> {
     _playbackSub = null;
     await _playback?.dispose();
     _playback = null;
+    await _streamSub?.cancel();
+    _streamSub = null;
+    await _stream?.dispose();
+    _stream = null;
     await _clockSub?.cancel();
     _clockSub = null;
     await _clock?.stop();

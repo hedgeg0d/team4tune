@@ -145,6 +145,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get streamBitrate => 'Stream bitrate';
+
+  @override
+  String get streamBitrateDescription =>
+      'Opus quality the server broadcasts to everyone in stream mode. Higher sounds better but needs more bandwidth. Applies to the next track.';
+
+  @override
+  String streamBitrateValue(int kbps) {
+    return '$kbps kbps';
+  }
+
+  @override
   String get policyEveryone => 'Everyone';
 
   @override

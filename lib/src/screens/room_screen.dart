@@ -69,7 +69,7 @@ class _RoomScreenState extends ConsumerState<RoomScreen> {
             IconButton(
               tooltip: l10n.roomSettingsTooltip,
               icon: const Icon(Icons.tune),
-              onPressed: () => _openSettings(ctrl, room.settings),
+              onPressed: () => _openSettings(ctrl, room.settings, room.mode),
             ),
           IconButton(
             tooltip: l10n.leaveTooltip,
@@ -239,13 +239,16 @@ class _RoomScreenState extends ConsumerState<RoomScreen> {
     );
   }
 
-  void _openSettings(RoomController ctrl, RoomSettings settings) {
+  void _openSettings(RoomController ctrl, RoomSettings settings, String mode) {
     showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
       isScrollControlled: true,
-      builder: (_) =>
-          _SettingsSheet(initial: settings, onChanged: ctrl.setSettings),
+      builder: (_) => _SettingsSheet(
+        initial: settings,
+        mode: mode,
+        onChanged: ctrl.setSettings,
+      ),
     );
   }
 }
@@ -730,9 +733,14 @@ class _SyncTuningSheetState extends State<_SyncTuningSheet> {
 }
 
 class _SettingsSheet extends StatefulWidget {
-  const _SettingsSheet({required this.initial, required this.onChanged});
+  const _SettingsSheet({
+    required this.initial,
+    required this.mode,
+    required this.onChanged,
+  });
 
   final RoomSettings initial;
+  final String mode;
   final void Function(RoomSettings) onChanged;
 
   @override
@@ -821,47 +829,94 @@ class _SettingsSheetState extends State<_SettingsSheet> {
                 onSelectionChanged: (s) => _update(_s.copyWith(sync: s.first)),
               ),
             ),
-            const Divider(height: 24),
-            Text(
-              l10n.cacheLimit,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              l10n.cacheLimitDescription,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+            if (widget.mode == modeStream) ...[
+              const Divider(height: 24),
+              Text(
+                l10n.streamBitrate,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Expanded(
-                  child: Slider(
-                    min: memLimitMinMb.toDouble(),
-                    max: memLimitMaxMb.toDouble(),
-                    divisions: memLimitMaxMb - memLimitMinMb,
-                    value: _s.memLimitMb
-                        .clamp(memLimitMinMb, memLimitMaxMb)
-                        .toDouble(),
-                    label: l10n.cacheLimitValue(_s.memLimitMb),
-                    onChanged: (v) =>
-                        setState(() => _s = _s.copyWith(memLimitMb: v.round())),
-                    onChangeEnd: (v) =>
-                        _update(_s.copyWith(memLimitMb: v.round())),
-                  ),
+              const SizedBox(height: 4),
+              Text(
+                l10n.streamBitrateDescription,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
-                const SizedBox(width: 8),
-                SizedBox(
-                  width: 64,
-                  child: Text(
-                    l10n.cacheLimitValue(_s.memLimitMb),
-                    textAlign: TextAlign.end,
-                    style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Expanded(
+                    child: Slider(
+                      min: streamBitrateMinKbps.toDouble(),
+                      max: streamBitrateMaxKbps.toDouble(),
+                      divisions:
+                          (streamBitrateMaxKbps - streamBitrateMinKbps) ~/ 8,
+                      value: _s.streamBitrateKbps
+                          .clamp(streamBitrateMinKbps, streamBitrateMaxKbps)
+                          .toDouble(),
+                      label: l10n.streamBitrateValue(_s.streamBitrateKbps),
+                      onChanged: (v) => setState(
+                        () => _s = _s.copyWith(streamBitrateKbps: v.round()),
+                      ),
+                      onChangeEnd: (v) =>
+                          _update(_s.copyWith(streamBitrateKbps: v.round())),
+                    ),
                   ),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    width: 64,
+                    child: Text(
+                      l10n.streamBitrateValue(_s.streamBitrateKbps),
+                      textAlign: TextAlign.end,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                ],
+              ),
+            ] else ...[
+              const Divider(height: 24),
+              Text(
+                l10n.cacheLimit,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                l10n.cacheLimitDescription,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Expanded(
+                    child: Slider(
+                      min: memLimitMinMb.toDouble(),
+                      max: memLimitMaxMb.toDouble(),
+                      divisions: memLimitMaxMb - memLimitMinMb,
+                      value: _s.memLimitMb
+                          .clamp(memLimitMinMb, memLimitMaxMb)
+                          .toDouble(),
+                      label: l10n.cacheLimitValue(_s.memLimitMb),
+                      onChanged: (v) => setState(
+                        () => _s = _s.copyWith(memLimitMb: v.round()),
+                      ),
+                      onChangeEnd: (v) =>
+                          _update(_s.copyWith(memLimitMb: v.round())),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    width: 64,
+                    child: Text(
+                      l10n.cacheLimitValue(_s.memLimitMb),
+                      textAlign: TextAlign.end,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),

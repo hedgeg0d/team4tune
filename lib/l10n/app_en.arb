@@ -55,6 +55,14 @@
       "mb": { "type": "int" }
     }
   },
+  "streamBitrate": "Stream bitrate",
+  "streamBitrateDescription": "Opus quality the server broadcasts to everyone in stream mode. Higher sounds better but needs more bandwidth. Applies to the next track.",
+  "streamBitrateValue": "{kbps} kbps",
+  "@streamBitrateValue": {
+    "placeholders": {
+      "kbps": { "type": "int" }
+    }
+  },
   "policyEveryone": "Everyone",
   "policyHost": "Host",
   "sharedTrackAdded": "Added to queue",

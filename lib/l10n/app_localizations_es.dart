@@ -145,6 +145,18 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get streamBitrate => 'Bitrate de transmisión';
+
+  @override
+  String get streamBitrateDescription =>
+      'Calidad de Opus que el servidor transmite a todos en modo transmisión. Más alto suena mejor pero usa más ancho de banda. Se aplica a la siguiente pista.';
+
+  @override
+  String streamBitrateValue(int kbps) {
+    return '$kbps kbps';
+  }
+
+  @override
   String get policyEveryone => 'Todos';
 
   @override

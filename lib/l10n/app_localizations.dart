@@ -358,6 +358,24 @@ abstract class AppLocalizations {
   /// **'{mb} MB'**
   String cacheLimitValue(int mb);
 
+  /// No description provided for @streamBitrate.
+  ///
+  /// In en, this message translates to:
+  /// **'Stream bitrate'**
+  String get streamBitrate;
+
+  /// No description provided for @streamBitrateDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Opus quality the server broadcasts to everyone in stream mode. Higher sounds better but needs more bandwidth. Applies to the next track.'**
+  String get streamBitrateDescription;
+
+  /// No description provided for @streamBitrateValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{kbps} kbps'**
+  String streamBitrateValue(int kbps);
+
   /// No description provided for @policyEveryone.
   ///
   /// In en, this message translates to:

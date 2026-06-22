@@ -145,6 +145,18 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get streamBitrate => 'Битрейт трансляции';
+
+  @override
+  String get streamBitrateDescription =>
+      'Качество Opus, которое сервер транслирует всем в режиме трансляции. Выше — лучше звук, но больше трафика. Применяется к следующему треку.';
+
+  @override
+  String streamBitrateValue(int kbps) {
+    return '$kbps кбит/с';
+  }
+
+  @override
   String get policyEveryone => 'Все';
 
   @override

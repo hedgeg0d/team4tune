@@ -49,6 +49,7 @@ dependencies:
   file_picker: ^8.1.0
   audio_decoder: ^0.8.1
   flutter_opus: ^1.0.4
+  flutter_webrtc: ^1.5.2
 
 dev_dependencies:
   flutter_test:

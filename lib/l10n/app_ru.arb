@@ -55,6 +55,14 @@
       "mb": { "type": "int" }
     }
   },
+  "streamBitrate": "Битрейт трансляции",
+  "streamBitrateDescription": "Качество Opus, которое сервер транслирует всем в режиме трансляции. Выше — лучше звук, но больше трафика. Применяется к следующему треку.",
+  "streamBitrateValue": "{kbps} кбит/с",
+  "@streamBitrateValue": {
+    "placeholders": {
+      "kbps": { "type": "int" }
+    }
+  },
   "policyEveryone": "Все",
   "policyHost": "Хост",
   "sharedTrackAdded": "Добавлено в очередь",

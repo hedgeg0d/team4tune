@@ -55,6 +55,14 @@
       "mb": { "type": "int" }
     }
   },
+  "streamBitrate": "Bitrate de transmisión",
+  "streamBitrateDescription": "Calidad de Opus que el servidor transmite a todos en modo transmisión. Más alto suena mejor pero usa más ancho de banda. Se aplica a la siguiente pista.",
+  "streamBitrateValue": "{kbps} kbps",
+  "@streamBitrateValue": {
+    "placeholders": {
+      "kbps": { "type": "int" }
+    }
+  },
   "policyEveryone": "Todos",
   "policyHost": "Anfitrión",
   "sharedTrackAdded": "Añadido a la cola",

@@ -11,6 +11,12 @@ const typeReady = 'ready';
 const typeProgress = 'progress';
 const typeBye = 'bye';
 const typePing = 'ping';
+const typeRtc = 'rtc';
+
+const rtcJoin = 'join';
+const rtcOffer = 'offer';
+const rtcAnswer = 'answer';
+const rtcIce = 'ice';
 
 const typeRoomState = 'room_state';
 const typeNowPlaying = 'now_playing';
@@ -40,6 +46,10 @@ const memLimitMinMb = 2;
 const memLimitMaxMb = 100;
 const memLimitDefaultMb = 50;
 
+const streamBitrateMinKbps = 16;
+const streamBitrateMaxKbps = 256;
+const streamBitrateDefaultKbps = 64;
+
 class RoomSettings {
   const RoomSettings({
     this.enqueue = policyEveryone,
@@ -48,6 +58,7 @@ class RoomSettings {
     this.control = policyEveryone,
     this.sync = syncResponsive,
     this.memLimitMb = memLimitDefaultMb,
+    this.streamBitrateKbps = streamBitrateDefaultKbps,
   });
 
   final String enqueue;
@@ -56,6 +67,7 @@ class RoomSettings {
   final String control;
   final String sync;
   final int memLimitMb;
+  final int streamBitrateKbps;
 
   String policyFor(String scope) {
     switch (scope) {
@@ -79,6 +91,7 @@ class RoomSettings {
     String? control,
     String? sync,
     int? memLimitMb,
+    int? streamBitrateKbps,
   }) {
     return RoomSettings(
       enqueue: enqueue ?? this.enqueue,
@@ -87,6 +100,7 @@ class RoomSettings {
       control: control ?? this.control,
       sync: sync ?? this.sync,
       memLimitMb: memLimitMb ?? this.memLimitMb,
+      streamBitrateKbps: streamBitrateKbps ?? this.streamBitrateKbps,
     );
   }
 
@@ -97,6 +111,7 @@ class RoomSettings {
         'control': control,
         'sync': sync,
         'memLimitMb': memLimitMb,
+        'streamBitrateKbps': streamBitrateKbps,
       };
 
   static RoomSettings fromJson(Map<String, dynamic>? j) {
@@ -108,6 +123,8 @@ class RoomSettings {
       control: j['control'] as String? ?? policyEveryone,
       sync: j['sync'] as String? ?? syncResponsive,
       memLimitMb: (j['memLimitMb'] as num?)?.toInt() ?? memLimitDefaultMb,
+      streamBitrateKbps:
+          (j['streamBitrateKbps'] as num?)?.toInt() ?? streamBitrateDefaultKbps,
     );
   }
 }
@@ -204,6 +221,7 @@ class RoomState {
     required this.settings,
     required this.members,
     required this.queue,
+    this.playingTrackId = '',
     this.udpPort = 0,
     this.resumeToken = '',
   });
@@ -215,6 +233,7 @@ class RoomState {
   final RoomSettings settings;
   final List<Member> members;
   final List<Track> queue;
+  final String playingTrackId;
   final int udpPort;
   final String resumeToken;
 
@@ -232,6 +251,7 @@ class RoomState {
         queue: ((j['queue'] as List?) ?? [])
             .map((t) => Track.fromJson(t as Map<String, dynamic>))
             .toList(),
+        playingTrackId: j['playingTrackId'] as String? ?? '',
         udpPort: (j['udpPort'] as num?)?.toInt() ?? 0,
         resumeToken: j['resumeToken'] as String? ?? '',
       );

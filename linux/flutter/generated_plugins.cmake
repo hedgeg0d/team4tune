@@ -5,6 +5,7 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   audio_decoder
   dynamic_color
+  flutter_webrtc
   media_kit_libs_linux
 )
 
