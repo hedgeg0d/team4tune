@@ -1,45 +1,27 @@
-# team4tune-client
+# team4tune
 
-Flutter client for [team4tune](https://github.com/team4tune) — synchronized group music
-listening. Anonymous and open source: no accounts, just a room code. **Android is the
-product; Linux desktop is a dev/verification target** (audio runs through libmpv there
-via `just_audio_media_kit`).
+Synchronized group music listening — Android app.
 
-## Status
+Create a room, share the code, queue tracks (URL or local file), and everyone hears the same thing at the same time. Audio sync is achieved through NTP-style clock agreement between every device and the server.
 
-- M0 — connect to a node server, create/join a room, live member list, enqueue a
-  track URL and watch the queue resolve.
-- M2 — NTP-style clock sync (ping/pong, min-RTT offset estimator) with an
-  offset/rtt debug strip in the room.
-- M3 — signal-mode playback: `PlaybackService` downloads the prepared file, sends
-  `ready`, and schedules start against `nowServerMs()` with `just_audio`; now-playing
-  bar in the room.
-- M4 (in progress) — drift correction: ~1s loop compares player position to the
-  expected `s + (serverNow - t0)` and corrects (`>250ms` seek / `30–250ms` speed nudge /
-  `<30ms` ignore); measured drift shown in the room debug chip.
+No accounts, no PII, no analytics. Rooms are ephemeral.
 
-## Run
+## Quick start
 
-Needs a running [`team4tune-node-server`](../team4tune-node-server).
+Needs a running [team4tune-node-server](https://github.com/hedgeg0d/team4tune-node).
 
 ```sh
 flutter pub get
-flutter run -d linux           # dev/verification on this machine
-flutter run                    # Android device/emulator (the product)
+flutter run                    # Android device/emulator
+flutter run -d linux           # Linux desktop (dev/verification)
 ```
 
-On the home screen set the server URL:
-
+Set the server URL on the home screen:
 - Linux desktop → `ws://127.0.0.1:8080/ws`
 - Android emulator → `ws://10.0.2.2:8080/ws`
 - Real device on LAN → `ws://<server-lan-ip>:8080/ws`
 
-For the real-Android audio path, see [`scripts/waydroid.md`](scripts/waydroid.md).
-
-## Build
-
-The server field defaults empty. To prefill a host, inject it at build time via
-`TEAM4TUNE_SERVER`:
+To prefill the server at build time:
 
 ```sh
 flutter build apk --dart-define=TEAM4TUNE_SERVER=ws://hedgegod.tech:8080/ws
@@ -51,28 +33,17 @@ flutter build apk --dart-define=TEAM4TUNE_SERVER=ws://hedgegod.tech:8080/ws
 flutter test
 # live round-trip against a running server:
 TEAM4TUNE_IT_URL=ws://127.0.0.1:8090/ws flutter test test/ws_integration_test.dart
-
-# full e2e harness (boots the server, drives the Linux app, headless via xvfb):
-scripts/verify.sh                              # connection + clock sync
-TEAM4TUNE_IT_SOURCE=<media-url> scripts/verify.sh   # + enqueue and verify audio advances
 ```
 
 ## Layout
 
 ```
-lib/main.dart                  app root, Home/Room switch
-lib/src/protocol.dart          wire format (mirrors server docs/protocol.md)
-lib/src/ws_client.dart         WebSocket connection + envelope stream
+lib/main.dart                  app root, screen routing
+lib/src/protocol.dart          wire format
+lib/src/ws_client.dart         WebSocket connection
 lib/src/clock_sync.dart        NTP-style offset/RTT estimator
-lib/src/playback_service.dart  download on prepare, schedule start, drift correction
-lib/src/room_controller.dart   Riverpod state: connection + room + clock + playback
-lib/src/screens/               home + room UI
-integration_test/             e2e tests driven by scripts/verify.sh
-scripts/verify.sh             boot server + run the Linux app e2e (headless)
-scripts/waydroid.md           real-Android verification path
+lib/src/playback_service.dart  download, schedule, drift correction
+lib/src/room_controller.dart   Riverpod state: connection + room + clock
+lib/src/screens/               home and room UI
+lib/src/stream_service.dart    WebRTC stream mode client
 ```
-
-## Roadmap
-
-- M4 — drift correction (in progress), late join
-- Later — stream mode, local-file upload
