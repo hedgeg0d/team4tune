@@ -10,10 +10,12 @@ jobs:
   analyze:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
+          channel: stable
+          flutter-version: 3.44.x
+          cache: true
       - run: flutter pub get
       - run: flutter analyze
 
@@ -21,10 +23,12 @@ jobs:
     needs: [analyze]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
+          channel: stable
+          flutter-version: 3.44.x
+          cache: true
       - run: flutter pub get
       - run: flutter test
 
@@ -35,7 +39,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - run: |
           git tag -f rolling-release
           git push origin rolling-release --force
