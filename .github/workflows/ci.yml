@@ -32,14 +32,40 @@ jobs:
       - run: flutter pub get
       - run: flutter test
 
-  tag:
+  apk:
     needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.44.x
+          cache: true
+      - run: flutter pub get
+      - run: flutter build apk --debug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: team4tune-apk
+          path: build/app/outputs/flutter-apk/*.apk
+
+  release:
+    needs: [apk]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v4
+        with:
+          name: team4tune-apk
+          path: ./apk
       - run: |
           git tag -f rolling-release
           git push origin rolling-release --force
+          gh release delete rolling-release -y 2>/dev/null || true
+          gh release create rolling-release --title "rolling-release" \
+            --notes "Latest build" --prerelease ./apk/*.apk
+        env:
+          GH_TOKEN: ${{ github.token }}
