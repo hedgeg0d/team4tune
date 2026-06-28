@@ -6,6 +6,10 @@ Create a room, share the code, queue tracks (URL or local file), and everyone he
 
 No accounts, no PII, no analytics. Rooms are ephemeral.
 
+Two playback modes:
+- **signal** — each device downloads the track and plays locally, synced via NTP-style clock (<50 ms target).
+- **stream** — the server broadcasts live audio over WebRTC to all clients (no clock sync needed, works with any source).
+
 ## Quick start
 
 Needs a running [team4tune-node-server](https://github.com/hedgeg0d/team4tune-node).
